@@ -108,6 +108,12 @@ void game(sf::TcpSocket *socket)
 	}
 /*
  * Sending board status and geting next move from player
+ * board format: 36 chars, each contaion info about one field
+ * ( 0-nothing, 1- red ghost, 2-blue ghost, 3-enemie ghost)
+ * move respond format:
+ * move[0] : 1 when moving ghost is red, 2 when moving ghost is blue
+ * move[1] : odl position of ghost
+ * move[2] : new position of ghost
  */
 	while(running) {
 		for(int i = 0; i < 2; ++i) {
