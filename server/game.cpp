@@ -137,7 +137,10 @@ void game(sf::TcpSocket *socket)
 			socket[act_player].send(&command, sizeof(command));
 			socket[act_player].receive(buf, 3, size);
 			//validate if player cheating via modification of client (or bug in client)
-			validate_move(act_player, buf, red, blue);
+			if(!validate_move(act_player, buf, red, blue)) {
+				std::cerr << "wrong move" << std::endl;
+				exit(1);
+			}
 			status = make_move(act_player, buf, red, blue, taken_red, taken_blue);
 		}
 		act_player = 1 - act_player;
