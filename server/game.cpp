@@ -37,7 +37,7 @@ bool validate_move(char id, char *move, char **red, char ** blue) {
 	if(move[0] == 2)
 		if(find(move[1], blue[id]) == -1)
 			return false;
-	if(find(move[2], red[id] != -1) || find(move[2], blue[id] != -1))
+	if(find(move[2], red[id]) != -1 || find(move[2], blue[id]) != -1)
 		return false;
 	if(move[1] % 6 != 0 && move[2] == (move[1] - 1))
 		return true;
