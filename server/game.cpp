@@ -92,9 +92,15 @@ void game(sf::TcpSocket *socket)
  * Sending ID of player to him
  */
 	buf[0] = 0; 
-	socket[0].send(buf, 1);
+	if(socket[0].send(buf, 1) != sf::Socket::Done) {
+		std::cout << "ERROR while sending id to client 0" << std::endl;
+		exit(1);
+	}
 	buf[0] = 1;
-	socket[1].send(buf, 1);
+	if(socket[1].send(buf, 1) != sf::Socket::Done) {
+		std::cout << "ERROR while sending id to client 1" << std::endl;
+		exit(1);
+	}
 /*
  * Geting initial position of ghosts from players
  */
@@ -102,7 +108,14 @@ void game(sf::TcpSocket *socket)
 	for(int i = 0; i < 2; ++i) {
 		red[i] = new char[4];
 		blue[i] = new char[4];
-		socket[i].receive(buf, 8, size);
+		if(socket[i].receive(buf, 8, size) != sf::Socket::Done) {
+			std::cerr << "ERROR while receiving initial ghost positions from player " << i << std::endl;
+			exit(1);
+		}
+		if(size != 8) {
+			std::cout << "ERROR: wrong amount of ytes received from player  " << i << std::endl;
+			exit(1);
+		}
 		memcpy(red[i], buf, 4);
 		memcpy(blue[i], buf + 4, 4);
 	}
@@ -118,30 +131,60 @@ void game(sf::TcpSocket *socket)
 	while(running) {
 		for(int i = 0; i < 2; ++i) {
 			command = BOARD;
-			socket[i].send(&command, sizeof(command));
-			socket[i].receive(buf, 1, size);
+			if(socket[i].send(&command, sizeof(command)) != sf::Socket::Done) {
+				std::cout << "ERROR while sending command BOARD to player  " << i << std::endl;
+				exit(1);
+			}
+			if(socket[i].receive(buf, 1, size) != sf::Socket::Done) {
+				std::cout << "ERROR while receiving answer from player  " << i << std::endl;
+				exit(1);
+			}
 			get_board(i, buf, red, blue);
-			socket[i].send(buf, 36);
-			socket[i].receive(buf, 1, size);
+			if(socket[i].send(buf, 36) != sf::Socket::Done) {
+				std::cout << "ERROR while sending board status to player  " << i << std::endl;
+				exit(1);
+			}
+			if(socket[i].receive(buf, 1, size) != sf::Socket::Done) {
+				std::cout << "ERROR while receiving board confirmation from player  " << i << std::endl;
+				exit(1);
+			}
 		}
 		if(status == WIN) {
 			command = LOSE;
-			socket[act_player].send(&command, sizeof(command));
+			if(socket[act_player].send(&command, sizeof(command)) != sf::Socket::Done) {
+				std::cout << "ERROR while sending LOSE command to player  " << static_cast<int>(act_player) << std::endl;
+				exit(1);
+			}
 			command = WIN;
-			socket[1 - act_player].send(&command, sizeof(command));
+			if(socket[1 - act_player].send(&command, sizeof(command)) != sf::Socket::Done) {
+				std::cout << "ERROR while sending WIN command to player  " << static_cast<int>(1 - act_player) << std::endl;
+				exit(1);
+			}
 			break;
 		}
 		else if(status == LOSE) {
 			command = WIN;
-			socket[act_player].send(&command, sizeof(command));
+			if(socket[act_player].send(&command, sizeof(command)) != sf::Socket::Done) {
+				std::cout << "ERROR while sending WIN command to player  " << static_cast<int>(act_player) << std::endl;
+				exit(1);
+			}
 			command = LOSE;
-			socket[1 - act_player].send(&command, sizeof(command));
+			if(socket[1 - act_player].send(&command, sizeof(command)) != sf::Socket::Done) {
+				std::cout << "ERROR while sending LOSE command to player  " << static_cast<int>(1 - act_player) << std::endl;
+				exit(1);
+			}
 			break;
 		}
 		else if(status == OK) {
 			command = MOVE;
-			socket[act_player].send(&command, sizeof(command));
-			socket[act_player].receive(buf, 3, size);
+			if(socket[act_player].send(&command, sizeof(command)) != sf::Socket::Done) {
+				std::cout << "ERROR while sending MOVE command to player  " << static_cast<int>(act_player) << std::endl;
+				exit(1);
+			}
+			if(socket[act_player].receive(buf, 3, size) != sf::Socket::Done) {
+				std::cerr << "ERROR while reciving move description from player " << static_cast<int>(act_player) << std::endl;
+				exit(0);
+			}
 			//validate if player cheating via modification of client (or bug in client)
 			if(!validate_move(act_player, buf, red, blue)) {
 				std::cerr << "wrong move" << std::endl;
