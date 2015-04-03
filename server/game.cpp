@@ -3,11 +3,10 @@
 #include <vector>
 #include <cstring>
 
-enum Command {BOARD, WIN, LOSE, MOVE};
+enum Command {BOARD, WIN, LOSE, MOVE, OK};
 
-char* get_board(char id, char **red, char **blue)
+void get_board(char id, char *board, char **red, char **blue)
 {
-	char *board = new char[36];
 	memset(board, 0, 36);
 	for(int i = 0; i < 4; ++i) {
 		if(red[id][i] != -1)
@@ -19,7 +18,6 @@ char* get_board(char id, char **red, char **blue)
 		if(blue[1 - id][i] != -1)
 			board[blue[1 - id][i]] = 3;
 	}
-	return board;
 }
 
 inline char find(char a, char *tab) {
@@ -31,6 +29,10 @@ inline char find(char a, char *tab) {
 }
 
 bool validate_move(char id, char *move, char **red, char ** blue) {
+	if(move[0] != 1 && move[0] != 2)
+		return false;
+	if(move[1] < 0 || move[2] < 0)
+		return false;
 	if(move[0] == 1)
 		if(find(move[1], red[id]) == -1)
 			return false;
@@ -50,14 +52,40 @@ bool validate_move(char id, char *move, char **red, char ** blue) {
 	return false;
 }
 
+Command make_move(char id, char *move, char **red, char **blue, char *taken_red, char *taken_blue)
+{
+	if(move[0] == 1)
+		red[id][find(move[1], red[id])] = move[2];
+	if(move[0] == 2)
+		blue[id][find(move[1], blue[id])] = move[2];
+	char position = find(move[2], red[1 - id]);
+	if(position != -1){
+		red[1 - id][position] = -1;
+		taken_red[1 - id]++;
+		if(taken_red[1 - id] == 4)
+			return LOSE;
+	}
+	position = find(move[2], blue[1 - id]);
+	if(position != -1) {
+		blue[1 - id][position] = -1;
+		taken_blue[1 - id]++;
+		if(taken_blue[1 - id] == 4)
+			return WIN;
+	}
+	if(id == 0 && move[0] == 2 && (move[2] == 30 || move[2] == 35))
+		return WIN;
+	if(id == 1 && move[0] == 2 && (move[2] == 0 || move[2] == 5))
+		return WIN;
+	return OK;
+}
 
 void game(sf::TcpSocket *socket)
 {
-	char buf[32];
+	char buf[36];
 	std::size_t size;
 	bool running = true;
 	char act_player = 0;
-	Command command;
+	Command command, status = OK;
 	char taken_red[2] = {0}, taken_blue[2] = {0};
 
 /*
@@ -86,13 +114,32 @@ void game(sf::TcpSocket *socket)
 			command = BOARD;
 			socket[i].send(&command, sizeof(command));
 			socket[i].receive(buf, 1, size);
+			get_board(i, buf, red, blue);
+			socket[i].send(buf, 36);
+			socket[i].receive(buf, 1, size);
 		}
-		command = MOVE;
-		socket[act_player].send(&command, sizeof(command));
-		socket[act_player].receive(buf, 3, size);
-		//validate if player cheating via modification of client (or bug in client)
-		validate_move(act_player, buf, red, blue);
-
+		if(status == WIN) {
+			command = LOSE;
+			socket[act_player].send(&command, sizeof(command));
+			command = WIN;
+			socket[1 - act_player].send(&command, sizeof(command));
+			break;
+		}
+		else if(status == LOSE) {
+			command = WIN;
+			socket[act_player].send(&command, sizeof(command));
+			command = LOSE;
+			socket[1 - act_player].send(&command, sizeof(command));
+			break;
+		}
+		else if(status == OK) {
+			command = MOVE;
+			socket[act_player].send(&command, sizeof(command));
+			socket[act_player].receive(buf, 3, size);
+			//validate if player cheating via modification of client (or bug in client)
+			validate_move(act_player, buf, red, blue);
+			status = make_move(act_player, buf, red, blue, taken_red, taken_blue);
+		}
 		act_player = 1 - act_player;
 	}
 
