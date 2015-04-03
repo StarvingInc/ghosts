@@ -93,12 +93,12 @@ void game(sf::TcpSocket *socket)
  */
 	buf[0] = 0; 
 	if(socket[0].send(buf, 1) != sf::Socket::Done) {
-		std::cout << "ERROR while sending id to client 0" << std::endl;
+		std::cerr << "ERROR while sending id to client 0" << std::endl;
 		exit(1);
 	}
 	buf[0] = 1;
 	if(socket[1].send(buf, 1) != sf::Socket::Done) {
-		std::cout << "ERROR while sending id to client 1" << std::endl;
+		std::cerr << "ERROR while sending id to client 1" << std::endl;
 		exit(1);
 	}
 /*
@@ -113,7 +113,7 @@ void game(sf::TcpSocket *socket)
 			exit(1);
 		}
 		if(size != 8) {
-			std::cout << "ERROR: wrong amount of ytes received from player  " << i << std::endl;
+			std::cerr << "ERROR: wrong amount of ytes received from player  " << i << std::endl;
 			exit(1);
 		}
 		memcpy(red[i], buf, 4);
@@ -132,32 +132,32 @@ void game(sf::TcpSocket *socket)
 		for(int i = 0; i < 2; ++i) {
 			command = BOARD;
 			if(socket[i].send(&command, sizeof(command)) != sf::Socket::Done) {
-				std::cout << "ERROR while sending command BOARD to player  " << i << std::endl;
+				std::cerr << "ERROR while sending command BOARD to player  " << i << std::endl;
 				exit(1);
 			}
 			if(socket[i].receive(buf, 1, size) != sf::Socket::Done) {
-				std::cout << "ERROR while receiving answer from player  " << i << std::endl;
+				std::cerr << "ERROR while receiving answer from player  " << i << std::endl;
 				exit(1);
 			}
 			get_board(i, buf, red, blue);
 			if(socket[i].send(buf, 36) != sf::Socket::Done) {
-				std::cout << "ERROR while sending board status to player  " << i << std::endl;
+				std::cerr << "ERROR while sending board status to player  " << i << std::endl;
 				exit(1);
 			}
 			if(socket[i].receive(buf, 1, size) != sf::Socket::Done) {
-				std::cout << "ERROR while receiving board confirmation from player  " << i << std::endl;
+				std::cerr << "ERROR while receiving board confirmation from player  " << i << std::endl;
 				exit(1);
 			}
 		}
 		if(status == WIN) {
 			command = LOSE;
 			if(socket[act_player].send(&command, sizeof(command)) != sf::Socket::Done) {
-				std::cout << "ERROR while sending LOSE command to player  " << static_cast<int>(act_player) << std::endl;
+				std::cerr << "ERROR while sending LOSE command to player  " << static_cast<int>(act_player) << std::endl;
 				exit(1);
 			}
 			command = WIN;
 			if(socket[1 - act_player].send(&command, sizeof(command)) != sf::Socket::Done) {
-				std::cout << "ERROR while sending WIN command to player  " << static_cast<int>(1 - act_player) << std::endl;
+				std::cerr << "ERROR while sending WIN command to player  " << static_cast<int>(1 - act_player) << std::endl;
 				exit(1);
 			}
 			break;
@@ -165,12 +165,12 @@ void game(sf::TcpSocket *socket)
 		else if(status == LOSE) {
 			command = WIN;
 			if(socket[act_player].send(&command, sizeof(command)) != sf::Socket::Done) {
-				std::cout << "ERROR while sending WIN command to player  " << static_cast<int>(act_player) << std::endl;
+				std::cerr << "ERROR while sending WIN command to player  " << static_cast<int>(act_player) << std::endl;
 				exit(1);
 			}
 			command = LOSE;
 			if(socket[1 - act_player].send(&command, sizeof(command)) != sf::Socket::Done) {
-				std::cout << "ERROR while sending LOSE command to player  " << static_cast<int>(1 - act_player) << std::endl;
+				std::cerr << "ERROR while sending LOSE command to player  " << static_cast<int>(1 - act_player) << std::endl;
 				exit(1);
 			}
 			break;
@@ -178,7 +178,7 @@ void game(sf::TcpSocket *socket)
 		else if(status == OK) {
 			command = MOVE;
 			if(socket[act_player].send(&command, sizeof(command)) != sf::Socket::Done) {
-				std::cout << "ERROR while sending MOVE command to player  " << static_cast<int>(act_player) << std::endl;
+				std::cerr << "ERROR while sending MOVE command to player  " << static_cast<int>(act_player) << std::endl;
 				exit(1);
 			}
 			if(socket[act_player].receive(buf, 3, size) != sf::Socket::Done) {
