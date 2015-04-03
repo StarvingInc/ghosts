@@ -50,6 +50,7 @@ bool validate_move(char id, char *move, char **red, char ** blue) {
 	return false;
 }
 
+
 void game(sf::TcpSocket *socket)
 {
 	char buf[32];
@@ -57,6 +58,8 @@ void game(sf::TcpSocket *socket)
 	bool running = true;
 	char act_player = 0;
 	Command command;
+	char taken_red[2] = {0}, taken_blue[2] = {0};
+
 /*
  * Sending ID of player to him
  */
@@ -64,9 +67,6 @@ void game(sf::TcpSocket *socket)
 	socket[0].send(buf, 1);
 	buf[0] = 1;
 	socket[1].send(buf, 1);
-	for(int i = 0; i < 2; ++i) {
-		socket[i].receive(buf, 1, size);
-	}
 /*
  * Geting initial position of ghosts from players
  */
@@ -90,11 +90,11 @@ void game(sf::TcpSocket *socket)
 		command = MOVE;
 		socket[act_player].send(&command, sizeof(command));
 		socket[act_player].receive(buf, 3, size);
+		//validate if player cheating via modification of client (or bug in client)
 		validate_move(act_player, buf, red, blue);
 
 		act_player = 1 - act_player;
 	}
-
 
 	std::cerr << "close connections and free memory  ";
 	socket[0].disconnect();
