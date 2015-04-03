@@ -112,7 +112,7 @@ void game(sf::TcpSocket *socket)
  * ( 0-nothing, 1- red ghost, 2-blue ghost, 3-enemie ghost)
  * move respond format:
  * move[0] : 1 when moving ghost is red, 2 when moving ghost is blue
- * move[1] : odl position of ghost
+ * move[1] : old position of ghost
  * move[2] : new position of ghost
  */
 	while(running) {
