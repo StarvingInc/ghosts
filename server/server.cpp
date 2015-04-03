@@ -1,13 +1,18 @@
 #include <iostream>
 #include <thread>
+#include <cstdlib>
 #include "game.hpp"
 
 int main(int argc, char **argv)
 {
 	bool running = true;
 	
+	int port = 32332;
+	if(argc > 1)
+		port = atoi(argv[1]);
+
 	sf::TcpListener listener;
-	listener.listen(32332);
+	listener.listen(port);
 	sf::TcpSocket *clients;
 	int ctr = 0;
 	while(running) {
