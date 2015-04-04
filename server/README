@@ -1,0 +1,18 @@
+comunication protocol description
+
+board:
+0  1  2  3  4  5
+6  7  8  9  10 11
+12 13 14 15 16 17
+18 19 20 21 22 23
+24 25 26 27 28 29
+30 31 32 33 34 35
+
+
+1. Server send 1 byte of id (it can be 1 or 2). It determine if player start on top or bottom of board (0 start on top).
+2. Server recive 8 bytes: initial position of ghosts. First for bytes are red ghosts and second 4 bytes are blue ghosts.
+3. Server send command (just copy enum from game.hpp file) it detrmine what will be send or needed to recive next
+	I BOARD: server receive one byte (dosn't matter what byte), next it send 36 bytes - board status (0 mean that field is free, 1 - red ghost, 2 - blue ghost, 3 - enemie ghost), next server recive one byte (same situation as abowe)
+	II MOVE: server recive 3 bytes move description: first is 1 when moving ghost is red or 2 if ghost is blue; second byte is old position of ghost and third is new position of ghost
+	III WIN or LOSE server don't need nothing to recive, simply end game
+
