@@ -144,7 +144,7 @@ void game(sf::TcpSocket *socket)
 	}
 	//validate recived data
 	if(!validate_initial_data(red, blue)) {
-		std::cerr << "ERROR initial data are wrong (chating or client bug)" << std::endl;
+		std::cerr << "ERROR initial data are wrong (cheating or client bug)" << std::endl;
 		exit(1);
 	}
 /*
