@@ -9,7 +9,7 @@ board:
 30 31 32 33 34 35
 
 
-1. Server send 1 byte of id (it can be 1 or 2). It determine if player start on top or bottom of board (0 start on top).
+1. Server send 1 byte of id (it can be 0 or 1). It determine if player start on top or bottom of board (0 start on top).
 2. Server recive 8 bytes: initial position of ghosts. First for bytes are red ghosts and second 4 bytes are blue ghosts.
 3. Server send command (just copy enum from game.hpp file) it detrmine what will be send or needed to recive next
 	I BOARD: server receive one byte (dosn't matter what byte), next it send 36 bytes - board status (0 mean that field is free, 1 - red ghost, 2 - blue ghost, 3 - enemie ghost), next server recive one byte (same situation as abowe)
