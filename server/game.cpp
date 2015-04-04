@@ -3,8 +3,6 @@
 #include <vector>
 #include <cstring>
 
-enum Command {BOARD, WIN, LOSE, MOVE, OK};
-
 void get_board(char id, char *board, char **red, char **blue)
 {
 	memset(board, 0, 36);
@@ -20,7 +18,8 @@ void get_board(char id, char *board, char **red, char **blue)
 	}
 }
 
-inline char find(char a, char *tab) {
+inline char find(char a, char *tab)
+{
 	char ret = -1;
 	for(int i = 0; i < 4; ++i)
 		if(tab[i] == a)
@@ -28,7 +27,8 @@ inline char find(char a, char *tab) {
 	return ret;
 }
 
-bool validate_move(char id, char *move, char **red, char ** blue) {
+bool validate_move(char id, char *move, char **red, char ** blue)
+{
 	if(move[0] != 1 && move[0] != 2)
 		return false;
 	if(move[1] < 0 || move[2] < 0)
