@@ -10,5 +10,7 @@ bool validate_move(char id, char *move, char **red, char ** blue);
 
 Command make_move(char id, char *move, char **red, char **blue, char *taken_red, char *taken_blue);
 
+bool validate_initial_data(char **red, char **blue);
+
 void game(sf::TcpSocket* socket);
 

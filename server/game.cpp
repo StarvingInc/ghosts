@@ -79,6 +79,27 @@ Command make_move(char id, char *move, char **red, char **blue, char *taken_red,
 	return OK;
 }
 
+bool validate_initial_data(char **red, char **blue)
+{
+	for(int i = 1; i <= 4; ++i) {
+		if(find(i, red[0]) == -1 && find(i, blue[0]) == -1)
+			return false;
+	}
+	for(int i = 7; i <= 10; ++i) {
+		if(find(i, red[0]) == -1 && find(i, blue[0]) == -1)
+			return false;
+	}
+	for(int i = 34; i >= 31; --i) {
+		if(find(i, red[1]) == -1 && find(i, blue[1]) == -1)
+			return false;
+	}
+	for(int i = 28; i >= 25; --i) {
+		if(find(i, red[1]) == -1 && find(i, blue[1]) == -1)
+			return false;
+	}
+	return true;
+}
+
 void game(sf::TcpSocket *socket)
 {
 	char buf[36];
@@ -118,6 +139,11 @@ void game(sf::TcpSocket *socket)
 		}
 		memcpy(red[i], buf, 4);
 		memcpy(blue[i], buf + 4, 4);
+	}
+	//validate recived data
+	if(!validate_initial_data(red, blue)) {
+		std::cerr << "ERROR initial data are wrong (chating or client bug)" << std::endl;
+		exit(1);
 	}
 /*
  * Sending board status and geting next move from player
