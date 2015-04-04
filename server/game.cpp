@@ -33,6 +33,8 @@ bool validate_move(char id, char *move, char **red, char ** blue)
 		return false;
 	if(move[1] < 0 || move[2] < 0)
 		return false;
+	if(move[1] >= 36 || move[2] >= 36)
+		return false;
 	if(move[0] == 1)
 		if(find(move[1], red[id]) == -1)
 			return false;
