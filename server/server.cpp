@@ -1,5 +1,5 @@
 #include <iostream>
-//#include <thread>
+#include <thread>
 #include <cstdlib>
 #include "game.hpp"
 
@@ -21,8 +21,8 @@ int main(int argc, char **argv)
 		listener.accept(clients[ctr]);
 		if(ctr == 1) {
 			std::cerr << "starting new game" << std::endl;
-			//std::thread game_thread(game, clients);
-			game(clients);
+			std::thread game_thread(game, clients);
+			game_thread.detach();
 		}
 		ctr = 1 - ctr;
 	}
