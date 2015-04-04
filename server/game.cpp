@@ -227,5 +227,9 @@ void game(sf::TcpSocket *socket)
 	socket[0].disconnect();
 	socket[1].disconnect();
 	delete socket;
+	for(int i = 0; i < 2; ++i) {
+		delete red[i];
+		delete blue[i];
+	}
 	std::cerr << "DONE" << std::endl;
 }
