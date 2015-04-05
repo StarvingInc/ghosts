@@ -1,3 +1,4 @@
 *.o
 a.out
-server/server
+server/sfml_server
+server/unix_server

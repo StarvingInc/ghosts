@@ -1,14 +1,14 @@
 CC=g++
 CFLAGS=-c -Wall -std=c++11
 LDFLAGS=-lsfml-network
-SOURCES=server.cpp game.cpp
+SOURCES=sfml_server.cpp game.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
-	EXECUTABLE=server
+	EXECUTABLE1=sfml_server
 
-all: $(SOURCES) $(EXECUTABLE)
+all: $(SOURCES) $(EXECUTABLE1)
 	    
-$(EXECUTABLE): $(OBJECTS) 
-	    $(CC) $(LDFLAGS) $(OBJECTS) -o $@
+$(EXECUTABLE1): $(OBJECTS) 
+	    $(CC) $(LDFLAGS) sfml_server.o game.o -o $@
 
 .cpp.o:
 	    $(CC) $(CFLAGS) $< -o $@
