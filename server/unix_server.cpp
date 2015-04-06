@@ -12,7 +12,7 @@
 
 void game(int *socket)
 {
-	char buf[36];
+	char buf[38];
 	std::size_t size;
 	bool running = true;
 	char act_player = 0;
