@@ -1,7 +1,7 @@
 CC=g++
 CFLAGS=-c -Wall -std=c++11
 LDFLAGS=-lsfml-network
-SOURCES=sfml_server.cpp game.cpp
+SOURCES=sfml_server.cpp game.cpp unix_server.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 	EXECUTABLE1=sfml_server
 
