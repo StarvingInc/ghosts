@@ -7,7 +7,6 @@
 #include <errno.h>
 #include <netinet/in.h>
 #include <netdb.h>
-#include <SFML/Network.hpp>
 #include "game.hpp"
 
 void game(int *socket)

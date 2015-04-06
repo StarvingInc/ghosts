@@ -5,10 +5,13 @@ SOURCES=sfml_server.cpp game.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 	EXECUTABLE1=sfml_server
 
-all: $(SOURCES) $(EXECUTABLE1)
+all: $(SOURCES) sfml_server unix_server
 	    
-$(EXECUTABLE1): $(OBJECTS) 
+sfml_server: $(OBJECTS) 
 	    $(CC) $(LDFLAGS) sfml_server.o game.o -o $@
+
+unix_server: $(OBJECTS) 
+	    $(CC) $(LDFLAGS) unix_server.o game.o -o $@
 
 .cpp.o:
 	    $(CC) $(CFLAGS) $< -o $@
