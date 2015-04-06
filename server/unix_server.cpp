@@ -22,12 +22,12 @@ void game(int *socket)
  * Sending ID of player to him
  */
 	buf[0] = 0; 
-	if(send(socket[0], buf, 1, 0) != 1) {
+	if (send(socket[0], buf, 1, 0) != 1) {
 		std::cerr << "ERROR while sending id to client 0" << std::endl;
 		return;
 	}
 	buf[0] = 1;
-	if(send(socket[1], buf, 1, 0) != 1) {
+	if (send(socket[1], buf, 1, 0) != 1) {
 		std::cerr << "ERROR while sending id to client 1" << std::endl;
 		return;
 	}
@@ -35,10 +35,10 @@ void game(int *socket)
  * Geting initial position of ghosts from players
  */
 	char *red[2], *blue[2];
-	for(int i = 0; i < 2; ++i) {
+	for (int i = 0; i < 2; ++i) {
 		red[i] = new char[4];
 		blue[i] = new char[4];
-		if(recv(socket[i], buf, 8, 0) != 8) {
+		if (recv(socket[i], buf, 8, 0) != 8) {
 			std::cerr << "ERROR while receiving initial ghost positions from player " << i << std::endl;
 			return;
 		}
@@ -46,7 +46,7 @@ void game(int *socket)
 		memcpy(blue[i], buf + 4, 4);
 	}
 	//validate recived data
-	if(!validate_initial_data(red, blue)) {
+	if (!validate_initial_data(red, blue)) {
 		std::cerr << "ERROR initial data are wrong (cheating or client bug)" << std::endl;
 		return;
 	}
@@ -59,65 +59,65 @@ void game(int *socket)
  * move[1] : old position of ghost
  * move[2] : new position of ghost
  */
-	while(running) {
-		for(int i = 0; i < 2; ++i) {
+	while (running) {
+		for (int i = 0; i < 2; ++i) {
 			command = BOARD;
-			if(send(socket[i], &command, sizeof command, 0) != sizeof command) {
+			if (send(socket[i], &command, sizeof command, 0) != sizeof command) {
 				std::cerr << "ERROR while sending command BOARD to player  " << i << std::endl;
 				return;
 			}
-			if(recv(socket[i], buf, 1, 0) != 1) {
+			if (recv(socket[i], buf, 1, 0) != 1) {
 				std::cerr << "ERROR while receiving answer from player  " << i << std::endl;
 				return;
 			}
 			get_board(i, buf, red, blue, taken_red, taken_blue);
-			if(send(socket[i], buf, 38, 0) != 38) {
+			if (send(socket[i], buf, 38, 0) != 38) {
 				std::cerr << "ERROR while sending board status to player  " << i << std::endl;
 				return;
 			}
-			if(recv(socket[i], buf, 1, 0) != 1) {
+			if (recv(socket[i], buf, 1, 0) != 1) {
 				std::cerr << "ERROR while receiving board confirmation from player  " << i << std::endl;
 				return;
 			}
 		}
-		if(status == WIN) {
+		if (status == WIN) {
 			command = LOSE;
-			if(send(socket[act_player], &command, sizeof command, 0) != sizeof command) {
+			if (send(socket[act_player], &command, sizeof command, 0) != sizeof command) {
 				std::cerr << "ERROR while sending LOSE command to player  " << static_cast<int>(act_player) << std::endl;
 				return;
 			}
 			command = WIN;
-			if(send(socket[1 - act_player], &command, sizeof command, 0) != sizeof command) {
+			if (send(socket[1 - act_player], &command, sizeof command, 0) != sizeof command) {
 				std::cerr << "ERROR while sending WIN command to player  " << static_cast<int>(1 - act_player) << std::endl;
 				return;
 			}
 			break;
 		}
-		else if(status == LOSE) {
+		else if (status == LOSE) {
 			command = WIN;
-			if(send(socket[act_player], &command, sizeof command, 0) != sizeof command) {
+			if (send(socket[act_player], &command, sizeof command, 0) != sizeof command) {
 				std::cerr << "ERROR while sending WIN command to player  " << static_cast<int>(act_player) << std::endl;
 				return;
 			}
 			command = LOSE;
-			if(send(socket[1 - act_player], &command, sizeof command, 0) != sizeof command) {
+			if (send(socket[1 - act_player], &command, sizeof command, 0) != sizeof command) {
 				std::cerr << "ERROR while sending LOSE command to player  " << static_cast<int>(1 - act_player) << std::endl;
 				return;
 			}
 			break;
 		}
-		else if(status == OK) {
+		else if (status == OK) {
 			command = MOVE;
-			if(send(socket[act_player], &command, sizeof command, 0) != sizeof command) {
+			if (send(socket[act_player], &command, sizeof command, 0) != sizeof command) {
 				std::cerr << "ERROR while sending MOVE command to player  " << static_cast<int>(act_player) << std::endl;
 				return;
 			}
-			if(recv(socket[act_player], buf, 3, 0) != 3) {
+			if (recv(socket[act_player], buf, 3, 0) != 3) {
 				std::cerr << "ERROR while reciving move description from player " << static_cast<int>(act_player) << std::endl;
 				return;
 			}
 			//validate if player cheating via modification of client (or bug in client)
-			if(!validate_move(act_player, buf, red, blue)) {
+			if (!validate_move(act_player, buf, red, blue)) {
 				std::cerr << "wrong move" << std::endl;
 				return;
 			}
@@ -127,7 +127,7 @@ void game(int *socket)
 	}
 
 	std::cerr << "close connections and free memory  ";
-	for(int i = 0; i < 2; ++i) {
+	for (int i = 0; i < 2; ++i) {
 		shutdown(socket[i], 2);
 		delete red[i];
 		delete blue[i];
@@ -151,17 +151,17 @@ int main(int argc, char **argv)
 	hints.ai_flags = AI_PASSIVE;
 
 	char *port;
-	if(argc > 1)
+	if (argc > 1)
 		port = argv[1];
 	else
 		port = "32332";
 
-	if((status = getaddrinfo(NULL, port, &hints, &res)) != 0) {
+	if ((status = getaddrinfo(NULL, port, &hints, &res)) != 0) {
 		std::cerr << gai_strerror(status) << std::endl;
 		exit(1);
 	}
 	listener = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
-	if(listener == -1) {
+	if (listener == -1) {
 		std::cerr << strerror(errno) << std::endl;
 		exit(1);
 	}
@@ -171,11 +171,11 @@ int main(int argc, char **argv)
 
 	int *clients;
 	int ctr = 0;
-	while(running) {
-		if(ctr == 0)
+	while (running) {
+		if (ctr == 0)
 			clients = new int[2];
 		clients[ctr] = accept(listener, (sockaddr *)&their_addr, &addr_size);
-		if(ctr == 1) {
+		if (ctr == 1) {
 			std::cerr << "starting new game" << std::endl;
 			game(clients);
 			//std::thread game_thread(game, clients);
