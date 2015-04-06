@@ -7,7 +7,7 @@
 
 void game(sf::TcpSocket *socket)
 {
-	char buf[36];
+	char buf[38];
 	std::size_t size;
 	bool running = true;
 	char act_player = 0;
@@ -70,7 +70,7 @@ void game(sf::TcpSocket *socket)
 				std::cerr << "ERROR while receiving answer from player  " << i << std::endl;
 				return;
 			}
-			get_board(i, buf, red, blue);
+			get_board(i, buf, red, blue, taken_red, taken_blue);
 			if(socket[i].send(buf, 36) != sf::Socket::Done) {
 				std::cerr << "ERROR while sending board status to player  " << i << std::endl;
 				return;

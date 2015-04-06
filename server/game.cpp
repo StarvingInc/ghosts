@@ -3,9 +3,9 @@
 #include <cstring>
 #include "game.hpp"
 
-void get_board(char id, char *board, char **red, char **blue)
+void get_board(char id, char *board, char **red, char **blue, char *taken_red, char *taken_blue)
 {
-	memset(board, 0, 36);
+	memset(board, 0, 38);
 	for(int i = 0; i < 4; ++i) {
 		if(red[id][i] != -1)
 			board[red[id][i]] = 1;
@@ -16,6 +16,8 @@ void get_board(char id, char *board, char **red, char **blue)
 		if(blue[1 - id][i] != -1)
 			board[blue[1 - id][i]] = 3;
 	}
+	board[36] = taken_red[1 - id];
+	board[37] = taken_blue[1 - id];
 }
 
 inline char find(char a, char *tab)
@@ -101,5 +103,3 @@ bool validate_initial_data(char **red, char **blue)
 	}
 	return true;
 }
-
-
